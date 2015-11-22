@@ -178,15 +178,7 @@ print(modFit_rf)</code></pre>
 ## C    0   15 2376    5    0 0.008347245
 ## D    0    0   22 2228    2 0.010657194
 ## E    0    0    0    7 2518 0.002772277</code></pre>
-<p>The expected OOB estimate of error rate is 0.52% and the breakdown by class are as follows.</p>
-<pre class="r"><code>modFit_rf$confusion</code></pre>
-<pre><code>##      A    B    C    D    E class.error
-## A 3901    4    0    0    1 0.001280082
-## B   13 2642    3    0    0 0.006019564
-## C    0   15 2376    5    0 0.008347245
-## D    0    0   22 2228    2 0.010657194
-## E    0    0    0    7 2518 0.002772277</code></pre>
-<p>It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).</p>
+<p>The expected OOB estimate of error rate is 0.52% and the breakdown by class are as shown above. It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(randomForest))
 # plot the accuracy and Gini
 varImpPlot(modFit_rf, main=&quot;Mean Decrease of Accuracy and Gini per variable&quot;)</code></pre>

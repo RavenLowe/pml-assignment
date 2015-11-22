@@ -138,13 +138,7 @@ modFit_rf <-randomForest(classe ~., data=training, importance=TRUE)
 print(modFit_rf)
 ```
 
-The expected OOB estimate of error rate is 0.52% and the breakdown by class are as follows.
-
-```{r, fig.width=5, fig.height=3, fig.align='center'}
-modFit_rf$confusion
-```
-
-It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).
+The expected OOB estimate of error rate is 0.52% and the breakdown by class are as shown above.  It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).
 
 ```{r, fig.width=9, fig.height=8, fig.align='center'}
 suppressPackageStartupMessages(library(randomForest))

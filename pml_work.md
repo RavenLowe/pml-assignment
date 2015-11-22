@@ -143,23 +143,7 @@ print(modFit_rf)
 ## E    0    0    0    7 2518 0.002772277
 ```
 
-The expected OOB estimate of error rate is 0.52% and the breakdown by class are as follows.
-
-
-```r
-modFit_rf$confusion
-```
-
-```
-##      A    B    C    D    E class.error
-## A 3901    4    0    0    1 0.001280082
-## B   13 2642    3    0    0 0.006019564
-## C    0   15 2376    5    0 0.008347245
-## D    0    0   22 2228    2 0.010657194
-## E    0    0    0    7 2518 0.002772277
-```
-
-It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).
+The expected OOB estimate of error rate is 0.52% and the breakdown by class are as shown above.  It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).
 
 
 ```r
@@ -168,7 +152,7 @@ suppressPackageStartupMessages(library(randomForest))
 varImpPlot(modFit_rf, main="Mean Decrease of Accuracy and Gini per variable")
 ```
 
-<img src="figure/unnamed-chunk-9-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="figure/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 This plot indicates that the measurements of the belt sensor (roll, yaw, and pitch), the forearm (pitch) and the dumbbell (magnetic component), are the most important for distinguishing whether this particular exercise is being done correctly or not. This makes sense as the way the core body moves and the rotation of the forearm, are closely related to a correct execution of the biceps curl, and in the case of the metallic dumbbell the position changes are readily detected by the magnetometer.
 
