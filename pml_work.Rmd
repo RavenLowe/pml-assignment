@@ -17,7 +17,7 @@ mode        : selfcontained # {standalone, draft}
 library(knitr)                                       # R markdown doc
 opts_chunk$set(message=FALSE, warning=FALSE,
                echo=TRUE, cache=TRUE,
-               fig.path="images/")                   # set the global options
+               fig.path="figure/")                   # set the global options
 suppressPackageStartupMessages(library(ggplot2))     # make the plots
 suppressPackageStartupMessages(library(gridExtra))   # for multi-panel plots
 ```
