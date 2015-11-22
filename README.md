@@ -152,7 +152,9 @@ suppressPackageStartupMessages(library(randomForest))
 varImpPlot(modFit_rf, main="Mean Decrease of Accuracy and Gini per variable")
 ```
 
-<img src="figure/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
+! [plot](https://github.com/RavenLowe/pml-assignment/blob/master/figure/unnamed-chunk-8-1.png)
+
+## <img src="figure/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 This plot indicates that the measurements of the belt sensor (roll, yaw, and pitch), the forearm (pitch) and the dumbbell (magnetic component), are the most important for distinguishing whether this particular exercise is being done correctly or not. This makes sense as the way the core body moves and the rotation of the forearm, are closely related to a correct execution of the biceps curl, and in the case of the metallic dumbbell the position changes are readily detected by the magnetometer.
 
