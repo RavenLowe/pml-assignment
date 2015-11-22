@@ -147,20 +147,17 @@ The expected OOB estimate of error rate is 0.52% and the breakdown by class are 
 
 
 ```r
-kable(modFit_rf$confusion, caption = "Table 1: Estimated error rates")
+modFit_rf$confusion
 ```
 
-
-
-Table: Table 1: Estimated error rates
-
-         A      B      C      D      E   class.error
----  -----  -----  -----  -----  -----  ------------
-A     3901      4      0      0      1     0.0012801
-B       13   2642      3      0      0     0.0060196
-C        0     15   2376      5      0     0.0083472
-D        0      0     22   2228      2     0.0106572
-E        0      0      0      7   2518     0.0027723
+```
+##      A    B    C    D    E class.error
+## A 3901    4    0    0    1 0.001280082
+## B   13 2642    3    0    0 0.006019564
+## C    0   15 2376    5    0 0.008347245
+## D    0    0   22 2228    2 0.010657194
+## E    0    0    0    7 2518 0.002772277
+```
 
 It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).
 
@@ -184,57 +181,51 @@ Now apply the random forests model to the probe set to gain a better understandi
 
 ```r
 cm_rf_probe <- confusionMatrix(probe$classe, predict(modFit_rf, newdata=probe))
-kable(cm_rf_probe$table, caption = "Table 2: Confusion Matrix Results of probe set")
+cm_rf_probe$table
 ```
 
-
-
-Table: Table 2: Confusion Matrix Results of probe set
-
-         A      B      C     D      E
----  -----  -----  -----  ----  -----
-A     1674      0      0     0      0
-B        8   1130      1     0      0
-C        0      1   1023     2      0
-D        0      0      9   954      1
-E        0      0      3     0   1079
+```
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1674    0    0    0    0
+##          B    8 1130    1    0    0
+##          C    0    1 1023    2    0
+##          D    0    0    9  954    1
+##          E    0    0    3    0 1079
+```
 
 ```r
-kable(cm_rf_probe$overall, caption = "Table 3: Overall Accuracy")
+cm_rf_probe$overall
 ```
 
-
-
-Table: Table 3: Overall Accuracy
-
----------------  ----------
-Accuracy          0.9957519
-Kappa             0.9946258
-AccuracyLower     0.9937353
-AccuracyUpper     0.9972490
-AccuracyNull      0.2858114
-AccuracyPValue    0.0000000
-McnemarPValue           NaN
----------------  ----------
+```
+##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
+##      0.9957519      0.9946258      0.9937353      0.9972490      0.2858114 
+## AccuracyPValue  McnemarPValue 
+##      0.0000000            NaN
+```
 
 Cross-validating the model results in an estimated error of 0.42 %.  As for the 95% confidence interval: [0.9937, 0.9972]. The estimated accuracy is well above the "no information rate" statistic of 0.2858. The validation results also in a high kappa statistic of 0.9946, which suggest a very good classifier.
 
 
 ```r
-kable(cm_rf_probe$byClass, caption = "Table 4: Accuracy by Classifier")
+cm_rf_probe$byClass
 ```
 
-
-
-Table: Table 4: Accuracy by Classifier
-
-            Sensitivity   Specificity   Pos Pred Value   Neg Pred Value   Prevalence   Detection Rate   Detection Prevalence   Balanced Accuracy
----------  ------------  ------------  ---------------  ---------------  -----------  ---------------  ---------------------  ------------------
-Class: A      0.9952438     1.0000000        1.0000000        0.9981002    0.2858114        0.2844520              0.2844520           0.9976219
-Class: B      0.9991158     0.9981069        0.9920983        0.9997893    0.1921835        0.1920136              0.1935429           0.9986113
-Class: C      0.9874517     0.9993813        0.9970760        0.9973246    0.1760408        0.1738318              0.1743415           0.9934165
-Class: D      0.9979079     0.9979712        0.9896266        0.9995936    0.1624469        0.1621071              0.1638063           0.9979396
-Class: E      0.9990741     0.9993757        0.9972274        0.9997918    0.1835174        0.1833475              0.1838573           0.9992249
+```
+##          Sensitivity Specificity Pos Pred Value Neg Pred Value Prevalence
+## Class: A   0.9952438   1.0000000      1.0000000      0.9981002  0.2858114
+## Class: B   0.9991158   0.9981069      0.9920983      0.9997893  0.1921835
+## Class: C   0.9874517   0.9993813      0.9970760      0.9973246  0.1760408
+## Class: D   0.9979079   0.9979712      0.9896266      0.9995936  0.1624469
+## Class: E   0.9990741   0.9993757      0.9972274      0.9997918  0.1835174
+##          Detection Rate Detection Prevalence Balanced Accuracy
+## Class: A      0.2844520            0.2844520         0.9976219
+## Class: B      0.1920136            0.1935429         0.9986113
+## Class: C      0.1738318            0.1743415         0.9934165
+## Class: D      0.1621071            0.1638063         0.9979396
+## Class: E      0.1833475            0.1838573         0.9992249
+```
 
         
 The random forest model is quite good - it achieves an accuracy more than 99%.

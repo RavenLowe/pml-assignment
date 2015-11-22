@@ -179,68 +179,13 @@ print(modFit_rf)</code></pre>
 ## D    0    0   22 2228    2 0.010657194
 ## E    0    0    0    7 2518 0.002772277</code></pre>
 <p>The expected OOB estimate of error rate is 0.52% and the breakdown by class are as follows.</p>
-<pre class="r"><code>kable(modFit_rf$confusion, caption = &quot;Table 1: Estimated error rates&quot;)</code></pre>
-<table>
-<caption>Table 1: Estimated error rates</caption>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">A</th>
-<th align="right">B</th>
-<th align="right">C</th>
-<th align="right">D</th>
-<th align="right">E</th>
-<th align="right">class.error</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">A</td>
-<td align="right">3901</td>
-<td align="right">4</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.0012801</td>
-</tr>
-<tr class="even">
-<td align="left">B</td>
-<td align="right">13</td>
-<td align="right">2642</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.0060196</td>
-</tr>
-<tr class="odd">
-<td align="left">C</td>
-<td align="right">0</td>
-<td align="right">15</td>
-<td align="right">2376</td>
-<td align="right">5</td>
-<td align="right">0</td>
-<td align="right">0.0083472</td>
-</tr>
-<tr class="even">
-<td align="left">D</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">22</td>
-<td align="right">2228</td>
-<td align="right">2</td>
-<td align="right">0.0106572</td>
-</tr>
-<tr class="odd">
-<td align="left">E</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">7</td>
-<td align="right">2518</td>
-<td align="right">0.0027723</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code>modFit_rf$confusion</code></pre>
+<pre><code>##      A    B    C    D    E class.error
+## A 3901    4    0    0    1 0.001280082
+## B   13 2642    3    0    0 0.006019564
+## C    0   15 2376    5    0 0.008347245
+## D    0    0   22 2228    2 0.010657194
+## E    0    0    0    7 2518 0.002772277</code></pre>
 <p>It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).</p>
 <pre class="r"><code>suppressPackageStartupMessages(library(randomForest))
 # plot the accuracy and Gini
@@ -253,171 +198,33 @@ varImpPlot(modFit_rf, main=&quot;Mean Decrease of Accuracy and Gini per variable
 <h3>Cross-validating the model with probe set</h3>
 <p>Now apply the random forests model to the probe set to gain a better understanding of how accurate the random forests model really is.</p>
 <pre class="r"><code>cm_rf_probe &lt;- confusionMatrix(probe$classe, predict(modFit_rf, newdata=probe))
-kable(cm_rf_probe$table, caption = &quot;Table 2: Confusion Matrix Results of probe set&quot;)</code></pre>
-<table>
-<caption>Table 2: Confusion Matrix Results of probe set</caption>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">A</th>
-<th align="right">B</th>
-<th align="right">C</th>
-<th align="right">D</th>
-<th align="right">E</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">A</td>
-<td align="right">1674</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">B</td>
-<td align="right">8</td>
-<td align="right">1130</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">C</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1023</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">D</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">9</td>
-<td align="right">954</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">E</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">0</td>
-<td align="right">1079</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>kable(cm_rf_probe$overall, caption = &quot;Table 3: Overall Accuracy&quot;)</code></pre>
-<table>
-<caption>Table 3: Overall Accuracy</caption>
-<tbody>
-<tr class="odd">
-<td align="left">Accuracy</td>
-<td align="right">0.9957519</td>
-</tr>
-<tr class="even">
-<td align="left">Kappa</td>
-<td align="right">0.9946258</td>
-</tr>
-<tr class="odd">
-<td align="left">AccuracyLower</td>
-<td align="right">0.9937353</td>
-</tr>
-<tr class="even">
-<td align="left">AccuracyUpper</td>
-<td align="right">0.9972490</td>
-</tr>
-<tr class="odd">
-<td align="left">AccuracyNull</td>
-<td align="right">0.2858114</td>
-</tr>
-<tr class="even">
-<td align="left">AccuracyPValue</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="odd">
-<td align="left">McnemarPValue</td>
-<td align="right">NaN</td>
-</tr>
-</tbody>
-</table>
+cm_rf_probe$table</code></pre>
+<pre><code>##           Reference
+## Prediction    A    B    C    D    E
+##          A 1674    0    0    0    0
+##          B    8 1130    1    0    0
+##          C    0    1 1023    2    0
+##          D    0    0    9  954    1
+##          E    0    0    3    0 1079</code></pre>
+<pre class="r"><code>cm_rf_probe$overall</code></pre>
+<pre><code>##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
+##      0.9957519      0.9946258      0.9937353      0.9972490      0.2858114 
+## AccuracyPValue  McnemarPValue 
+##      0.0000000            NaN</code></pre>
 <p>Cross-validating the model results in an estimated error of 0.42 %. As for the 95% confidence interval: [0.9937, 0.9972]. The estimated accuracy is well above the “no information rate” statistic of 0.2858. The validation results also in a high kappa statistic of 0.9946, which suggest a very good classifier.</p>
-<pre class="r"><code>kable(cm_rf_probe$byClass, caption = &quot;Table 4: Accuracy by Classifier&quot;)</code></pre>
-<table>
-<caption>Table 4: Accuracy by Classifier</caption>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">Sensitivity</th>
-<th align="right">Specificity</th>
-<th align="right">Pos Pred Value</th>
-<th align="right">Neg Pred Value</th>
-<th align="right">Prevalence</th>
-<th align="right">Detection Rate</th>
-<th align="right">Detection Prevalence</th>
-<th align="right">Balanced Accuracy</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Class: A</td>
-<td align="right">0.9952438</td>
-<td align="right">1.0000000</td>
-<td align="right">1.0000000</td>
-<td align="right">0.9981002</td>
-<td align="right">0.2858114</td>
-<td align="right">0.2844520</td>
-<td align="right">0.2844520</td>
-<td align="right">0.9976219</td>
-</tr>
-<tr class="even">
-<td align="left">Class: B</td>
-<td align="right">0.9991158</td>
-<td align="right">0.9981069</td>
-<td align="right">0.9920983</td>
-<td align="right">0.9997893</td>
-<td align="right">0.1921835</td>
-<td align="right">0.1920136</td>
-<td align="right">0.1935429</td>
-<td align="right">0.9986113</td>
-</tr>
-<tr class="odd">
-<td align="left">Class: C</td>
-<td align="right">0.9874517</td>
-<td align="right">0.9993813</td>
-<td align="right">0.9970760</td>
-<td align="right">0.9973246</td>
-<td align="right">0.1760408</td>
-<td align="right">0.1738318</td>
-<td align="right">0.1743415</td>
-<td align="right">0.9934165</td>
-</tr>
-<tr class="even">
-<td align="left">Class: D</td>
-<td align="right">0.9979079</td>
-<td align="right">0.9979712</td>
-<td align="right">0.9896266</td>
-<td align="right">0.9995936</td>
-<td align="right">0.1624469</td>
-<td align="right">0.1621071</td>
-<td align="right">0.1638063</td>
-<td align="right">0.9979396</td>
-</tr>
-<tr class="odd">
-<td align="left">Class: E</td>
-<td align="right">0.9990741</td>
-<td align="right">0.9993757</td>
-<td align="right">0.9972274</td>
-<td align="right">0.9997918</td>
-<td align="right">0.1835174</td>
-<td align="right">0.1833475</td>
-<td align="right">0.1838573</td>
-<td align="right">0.9992249</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code>cm_rf_probe$byClass</code></pre>
+<pre><code>##          Sensitivity Specificity Pos Pred Value Neg Pred Value Prevalence
+## Class: A   0.9952438   1.0000000      1.0000000      0.9981002  0.2858114
+## Class: B   0.9991158   0.9981069      0.9920983      0.9997893  0.1921835
+## Class: C   0.9874517   0.9993813      0.9970760      0.9973246  0.1760408
+## Class: D   0.9979079   0.9979712      0.9896266      0.9995936  0.1624469
+## Class: E   0.9990741   0.9993757      0.9972274      0.9997918  0.1835174
+##          Detection Rate Detection Prevalence Balanced Accuracy
+## Class: A      0.2844520            0.2844520         0.9976219
+## Class: B      0.1920136            0.1935429         0.9986113
+## Class: C      0.1738318            0.1743415         0.9934165
+## Class: D      0.1621071            0.1638063         0.9979396
+## Class: E      0.1833475            0.1838573         0.9992249</code></pre>
 <p>The random forest model is quite good - it achieves an accuracy more than 99%.</p>
 <hr />
 </div>

@@ -141,7 +141,7 @@ print(modFit_rf)
 The expected OOB estimate of error rate is 0.52% and the breakdown by class are as follows.
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
-kable(modFit_rf$confusion, caption = "Table 1: Estimated error rates")
+modFit_rf$confusion
 ```
 
 It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).
@@ -162,15 +162,14 @@ Now apply the random forests model to the probe set to gain a better understandi
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
 cm_rf_probe <- confusionMatrix(probe$classe, predict(modFit_rf, newdata=probe))
-kable(cm_rf_probe$table, caption = "Table 2: Confusion Matrix Results of probe set")
-
-kable(cm_rf_probe$overall, caption = "Table 3: Overall Accuracy")
+cm_rf_probe$table
+cm_rf_probe$overall
 ```
 
 Cross-validating the model results in an estimated error of `r paste(round(100 - cm_rf_probe$overall["Accuracy"]*100, 2), "%")`.  As for the 95% confidence interval: [`r round(cm_rf_probe$overall["AccuracyLower"], 4)`, `r round(cm_rf_probe$overall["AccuracyUpper"], 4)`]. The estimated accuracy is well above the "no information rate" statistic of `r round(cm_rf_probe$overall["AccuracyNull"], 4)`. The validation results also in a high kappa statistic of `r round(cm_rf_probe$overall["Kappa"], 4)`, which suggest a very good classifier.
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
-kable(cm_rf_probe$byClass, caption = "Table 4: Accuracy by Classifier")
+cm_rf_probe$byClass
 ```
 
         
