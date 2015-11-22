@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Pml-assignment by RavenLowe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Pml-assignment</h1>
+      <h2 class="project-tagline"></h2>
+      <a href="https://github.com/RavenLowe/pml-assignment" class="btn">View on GitHub</a>
+      <a href="https://github.com/RavenLowe/pml-assignment/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/RavenLowe/pml-assignment/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="predictive-modeling-on-human-activity-recognition-of-weight-lifting-exercise" class="anchor" href="#predictive-modeling-on-human-activity-recognition-of-weight-lifting-exercise" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predictive Modeling on Human Activity Recognition of Weight Lifting Exercise</h1>
+
+<h3>
+<a id="executive-summary" class="anchor" href="#executive-summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Executive summary</h3>
+
+<p>A large amount of human acitivity data has been collected by wearable devices.  One thing that people regularly take these measurements is to quantify how much of a particular activity they do, but they rarely quantify how well they do it.  So this report is going to explore how to predict activity quality from activity monitors, using the weight-lifting exercise dataset coming from the Qualitative Activity Recognition of Weight Lifting Exercise analysis.</p>
+
+<p>In this weight-lifting exercise experiment, participants were asked to perform one set of 10 repetitions of the same Unilateral Dumbbell Bisceps Curl exercise correctly (Class A) and other 4 common incorrect ways (Class B through E):</p>
+
+<ul>
+<li>Class A: exactly according to the specification</li>
+<li>Class B: throwing the elbows to the front</li>
+<li>Class C: lifting the dumbbell only halfway</li>
+<li>Class D: lowering the dumbbell only halfway</li>
+<li>Class E: throwing the hips to the front</li>
+</ul>
+
+<p>The sensors, which were mounted on participants' glove, armband, lumbar belt and dumbbell, recorded the data such as Euler anlges (roll, pitch and yaw), raw accelermoeter, gyroscope and magnetometer readings.</p>
+
+<p>More information is available from the website here: <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a> (see the section on the Weight Lifting Exercise Dataset).</p>
+
+<p>Using this weight-lifting exercise dataset, the goal of this report is to employ machine leaning algorithm to build a predictive model that will attempt to classify the manner (or class) in which they did the exercise.  It turns out that random forest algorithm predicts very well on the provided test data.</p>
+
+<hr>
+
+<h3>
+<a id="loading-in-the-datasets" class="anchor" href="#loading-in-the-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loading in the datasets</h3>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># read in the traing set and test set</span>
+<span class="pl-smi">data</span> <span class="pl-k">&lt;-</span> read.csv(<span class="pl-s"><span class="pl-pds">"</span>~/Documents/R/pml-training.csv<span class="pl-pds">"</span></span>, <span class="pl-v">header</span><span class="pl-k">=</span><span class="pl-c1">TRUE</span>, <span class="pl-v">na.strings</span><span class="pl-k">=</span>c(<span class="pl-s"><span class="pl-pds">"</span>NA<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>#DIV/0!<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>))
+<span class="pl-smi">test</span> <span class="pl-k">&lt;-</span> read.csv(<span class="pl-s"><span class="pl-pds">"</span>~/Documents/R/pml-testing.csv<span class="pl-pds">"</span></span>, <span class="pl-v">header</span><span class="pl-k">=</span><span class="pl-c1">TRUE</span>, <span class="pl-v">na.strings</span><span class="pl-k">=</span>c(<span class="pl-s"><span class="pl-pds">"</span>NA<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>#DIV/0!<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>))
+
+<span class="pl-c"># get a sense of how datasets look like</span>
+summary(<span class="pl-smi">data</span>)
+summary(<span class="pl-smi">test</span>)
+dim(<span class="pl-smi">data</span>)
+dim(<span class="pl-smi">test</span>)
+
+<span class="pl-c"># analyze the class of variables in the dataset</span>
+table(sapply(<span class="pl-smi">data</span>,<span class="pl-smi">class</span>))
+table(sapply(<span class="pl-smi">test</span>,<span class="pl-smi">class</span>))</pre></div>
+
+<p>There were two datasets in CSV format, one to be used for training, and another one for testing.</p>
+
+<ul>
+<li>A training set made up of 19,622 observations of 160 variables. Each observation is a single repetition of the given exercise.</li>
+<li>A test set made up of 20 observations that will be used as a final evaluation for the predictive model</li>
+</ul>
+
+<hr>
+
+<h3>
+<a id="cleaning-and-preparing-the-data" class="anchor" href="#cleaning-and-preparing-the-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cleaning and preparing the data</h3>
+
+<p>In this section, we will inspect, clean and prepare the data for further processing.</p>
+
+<ol>
+<li>reformat all measurement columns into numerics</li>
+</ol>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-k">for</span> (<span class="pl-smi">i</span> <span class="pl-k">in</span> <span class="pl-c1">8</span><span class="pl-k">:</span><span class="pl-c1">159</span>) {
+        <span class="pl-smi">data</span>[,<span class="pl-smi">i</span>] <span class="pl-k">&lt;-</span> as.numeric(<span class="pl-smi">data</span>[,<span class="pl-smi">i</span>])
+        <span class="pl-smi">test</span>[,<span class="pl-smi">i</span>] <span class="pl-k">&lt;-</span> as.numeric(<span class="pl-smi">test</span>[,<span class="pl-smi">i</span>])
+}</pre></div>
+
+<ol>
+<li>remove unnecessary columns</li>
+</ol>
+
+<p>The first seven columns of the training dataset (X, user_name, raw_timestamp_part_1, raw_timestamp_part_2, cvtd_timestamp, new_window, num_window) are not related to the sensor measurements, but rather to the identity of the person, and the time stamps and capture windows for the sensor data.  According to the description of weight-lifting exercise experiment, participants were supervised by an experienced wieght lifter to make sure the execution complied to the manner that they are supposed to simulate, so those seven columns are not determining features to the predictive model and can be removed.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">data</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[,<span class="pl-k">-</span>(<span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-c1">7</span>)]</pre></div>
+
+<ol>
+<li>identify variables that are overwhelmingly missing values (NA) and these too are to be removed</li>
+</ol>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># select columns that don't have NAs</span>
+<span class="pl-smi">indexNA</span> <span class="pl-k">&lt;-</span> as.vector( sapply(<span class="pl-smi">data</span>, <span class="pl-k">function</span>(<span class="pl-smi">x</span>) {length(which(is.na(<span class="pl-smi">x</span>)))<span class="pl-k">!=</span><span class="pl-c1">0</span>}))
+<span class="pl-smi">data</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[,<span class="pl-k">!</span><span class="pl-smi">indexNA</span>]</pre></div>
+
+<p>As far 52 measurements of the x, y, and z axis components of the acceleration, gyroscope, and magnetometer sensors, as well as the overall acceleration, pitch, roll and yaw, are retained as the predictor candidates.</p>
+
+<hr>
+
+<h3>
+<a id="creating-a-cross-validation-set" class="anchor" href="#creating-a-cross-validation-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a cross validation set</h3>
+
+<p>Next the original training set is futher split into two parts: 70% of the observations will be used to train the model and the remaining 30% will serve as probe set. The original test set will be reserved until final testing.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># subset the original training set into training/probe sets for cross validation</span>
+suppressPackageStartupMessages(library(<span class="pl-smi">caret</span>))
+set.seed(<span class="pl-c1">6882</span>)
+<span class="pl-smi">indexTrain</span> <span class="pl-k">&lt;-</span> createDataPartition(<span class="pl-smi">data</span><span class="pl-k">$</span><span class="pl-smi">classe</span>, <span class="pl-v">p</span><span class="pl-k">=</span><span class="pl-c1">0.7</span>, <span class="pl-v">list</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>)
+<span class="pl-smi">training</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[<span class="pl-smi">indexTrain</span>, ]        <span class="pl-c"># 70%</span>
+<span class="pl-smi">probe</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[<span class="pl-k">-</span><span class="pl-smi">indexTrain</span>, ]          <span class="pl-c"># 30%</span></pre></div>
+
+<hr>
+
+<h3>
+<a id="building-predictive-model" class="anchor" href="#building-predictive-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building predictive model</h3>
+
+<p>Before training the model, let's check if any near zero variance predictors.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># select columns that don't have NAs</span>
+nearZeroVar(<span class="pl-smi">data</span>, , <span class="pl-v">saveMetrics</span><span class="pl-k">=</span><span class="pl-c1">TRUE</span>)</pre></div>
+
+<p>There are no numeric variables with near zero variance, so no more variables can be reduced this way and the remaining 52 predictor candidates continue to be used in the model building.</p>
+
+<p>Since random forests are usually one of the two top performing algorithms along with boosting in prediction contest, let's start with random forests. Firstly set a seed to make this report reproducable.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># set seed for reproducibility</span>
+set.seed(<span class="pl-c1">68</span>)
+
+<span class="pl-c"># Model 1: RandomForest</span>
+suppressPackageStartupMessages(library(<span class="pl-smi">randomForest</span>))
+<span class="pl-smi">modFit_rf</span> <span class="pl-k">&lt;-</span>randomForest(<span class="pl-smi">classe</span> <span class="pl-k">~</span>., <span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-smi">training</span>, <span class="pl-v">importance</span><span class="pl-k">=</span><span class="pl-c1">TRUE</span>)
+print(<span class="pl-smi">modFit_rf</span>)</pre></div>
+
+<pre><code>## 
+## Call:
+##  randomForest(formula = classe ~ ., data = training, importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 7
+## 
+##         OOB estimate of  error rate: 0.52%
+## Confusion matrix:
+##      A    B    C    D    E class.error
+## A 3901    4    0    0    1 0.001280082
+## B   13 2642    3    0    0 0.006019564
+## C    0   15 2376    5    0 0.008347245
+## D    0    0   22 2228    2 0.010657194
+## E    0    0    0    7 2518 0.002772277
+</code></pre>
+
+<p>The expected OOB estimate of error rate is 0.52% and the breakdown by class are as shown above.  It can be seen that the initial error estimates are quite good. Random forests are often very accurate but difficult to interpret (see the first 30 predictors, ordered by their mean decrease in accuracy and Gini, in below figure).</p>
+
+<div class="highlight highlight-source-r"><pre>suppressPackageStartupMessages(library(<span class="pl-smi">randomForest</span>))
+<span class="pl-c"># plot the accuracy and Gini</span>
+varImpPlot(<span class="pl-smi">modFit_rf</span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Mean Decrease of Accuracy and Gini per variable<span class="pl-pds">"</span></span>)</pre></div>
+
+<p><img src="https://github.com/RavenLowe/pml-assignment/tree/master/figure/unnamed-chunk-8-1.png" alt="plot">.</p>
+
+<p>This plot indicates that the measurements of the belt sensor (roll, yaw, and pitch), the forearm (pitch) and the dumbbell (magnetic component), are the most important for distinguishing whether this particular exercise is being done correctly or not. This makes sense as the way the core body moves and the rotation of the forearm, are closely related to a correct execution of the biceps curl, and in the case of the metallic dumbbell the position changes are readily detected by the magnetometer.</p>
+
+<hr>
+
+<h3>
+<a id="cross-validating-the-model-with-probe-set" class="anchor" href="#cross-validating-the-model-with-probe-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cross-validating the model with probe set</h3>
+
+<p>Now apply the random forests model to the probe set to gain a better understanding of how accurate the random forests model really is.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">cm_rf_probe</span> <span class="pl-k">&lt;-</span> confusionMatrix(<span class="pl-smi">probe</span><span class="pl-k">$</span><span class="pl-smi">classe</span>, predict(<span class="pl-smi">modFit_rf</span>, <span class="pl-v">newdata</span><span class="pl-k">=</span><span class="pl-smi">probe</span>))
+<span class="pl-smi">cm_rf_probe</span><span class="pl-k">$</span><span class="pl-smi">table</span></pre></div>
+
+<pre><code>##           Reference
+## Prediction    A    B    C    D    E
+##          A 1674    0    0    0    0
+##          B    8 1130    1    0    0
+##          C    0    1 1023    2    0
+##          D    0    0    9  954    1
+##          E    0    0    3    0 1079
+</code></pre>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">cm_rf_probe</span><span class="pl-k">$</span><span class="pl-smi">overall</span></pre></div>
+
+<pre><code>##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
+##      0.9957519      0.9946258      0.9937353      0.9972490      0.2858114 
+## AccuracyPValue  McnemarPValue 
+##      0.0000000            NaN
+</code></pre>
+
+<p>Cross-validating the model results in an estimated error of 0.42 % and the 95% confidence interval: [0.9937, 0.9972]. The validation results also in a high kappa statistic of 0.9946, which suggest a very good classifier.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-smi">cm_rf_probe</span><span class="pl-k">$</span><span class="pl-smi">byClass</span></pre></div>
+
+<pre><code>##          Sensitivity Specificity Pos Pred Value Neg Pred Value Prevalence
+## Class: A   0.9952438   1.0000000      1.0000000      0.9981002  0.2858114
+## Class: B   0.9991158   0.9981069      0.9920983      0.9997893  0.1921835
+## Class: C   0.9874517   0.9993813      0.9970760      0.9973246  0.1760408
+## Class: D   0.9979079   0.9979712      0.9896266      0.9995936  0.1624469
+## Class: E   0.9990741   0.9993757      0.9972274      0.9997918  0.1835174
+##          Detection Rate Detection Prevalence Balanced Accuracy
+## Class: A      0.2844520            0.2844520         0.9976219
+## Class: B      0.1920136            0.1935429         0.9986113
+## Class: C      0.1738318            0.1743415         0.9934165
+## Class: D      0.1621071            0.1638063         0.9979396
+## Class: E      0.1833475            0.1838573         0.9992249
+</code></pre>
+
+<p>The random forest model is quite good - it achieves an accuracy more than 99%.</p>
+
+<hr>
+
+<h3>
+<a id="final-evaluation-with-test-set" class="anchor" href="#final-evaluation-with-test-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Final evaluation with test set</h3>
+
+<p>Finally the random forest model is further applied to the test sets and then to create the files for programming submission.</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># select the required variables only just like training/probe sets</span>
+<span class="pl-smi">test</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">test</span>[, names(<span class="pl-smi">test</span>) <span class="pl-k">%in%</span> names(<span class="pl-smi">data</span>)]
+<span class="pl-smi">answer</span> <span class="pl-k">&lt;-</span> predict(<span class="pl-smi">modFit_rf</span>, <span class="pl-smi">test</span>)
+<span class="pl-smi">answer</span> <span class="pl-k">&lt;-</span> as.character(<span class="pl-smi">answer</span>)</pre></div>
+
+<hr>
+
+<h3>
+<a id="submission-to-coursea" class="anchor" href="#submission-to-coursea" aria-hidden="true"><span class="octicon octicon-link"></span></a>Submission to Coursea</h3>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># code as suggested by Coursera to create 20 text files with a single capital letter (A, B, C, D, or E).  Each text file corresponding to the prediction for the corresponding problem in the test data set.</span>
+
+<span class="pl-v">pml_write_files</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">x</span>){
+        <span class="pl-v">n</span> <span class="pl-k">=</span> length(<span class="pl-smi">x</span>)
+        <span class="pl-smi">path</span> <span class="pl-k">&lt;-</span> <span class="pl-s"><span class="pl-pds">"</span>~/Documents/R<span class="pl-pds">"</span></span>
+        <span class="pl-k">for</span>(<span class="pl-smi">i</span> <span class="pl-k">in</span> <span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-smi">n</span>){
+                <span class="pl-v">filename</span> <span class="pl-k">=</span> paste0(<span class="pl-s"><span class="pl-pds">"</span>problem_id_<span class="pl-pds">"</span></span>,<span class="pl-smi">i</span>,<span class="pl-s"><span class="pl-pds">"</span>.txt<span class="pl-pds">"</span></span>)
+                write.table(<span class="pl-smi">x</span>[<span class="pl-smi">i</span>], <span class="pl-v">file</span><span class="pl-k">=</span>file.path(<span class="pl-smi">path</span>, <span class="pl-smi">filename</span>), 
+                <span class="pl-v">quote</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>, <span class="pl-v">row.names</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>, <span class="pl-v">col.names</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>)
+        }
+}
+pml_write_files(<span class="pl-smi">answer</span>)</pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/RavenLowe/pml-assignment">Pml-assignment</a> is maintained by <a href="https://github.com/RavenLowe">RavenLowe</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
