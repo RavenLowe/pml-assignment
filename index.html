@@ -25,7 +25,7 @@
 <h3>
 <a id="executive-summary" class="anchor" href="#executive-summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Executive summary</h3>
 
-<p>A large amount of human acitivity data has been collected by wearable devices.  One thing that people regularly take these measurements is to quantify how much of a particular activity they do, but they rarely quantify how well they do it.  So this report is going to explore how to predict activity quality from activity monitors, using the weight-lifting exercise dataset coming from the Qualitative Activity Recognition of Weight Lifting Exercise analysis.</p>
+<p>A large amount of human activity data has been collected by wearable devices.  One thing that people regularly take these measurements is to quantify how much of a particular activity they do, but they rarely quantify how well they do it.  So this report is going to explore how to predict activity quality from activity monitors, using the weight-lifting exercise dataset coming from the Qualitative Activity Recognition of Weight Lifting Exercise analysis.</p>
 
 <p>In this weight-lifting exercise experiment, participants were asked to perform one set of 10 repetitions of the same Unilateral Dumbbell Bisceps Curl exercise correctly (Class A) and other 4 common incorrect ways (Class B through E):</p>
 
@@ -76,26 +76,20 @@ table(sapply(<span class="pl-smi">test</span>,<span class="pl-smi">class</span>)
 
 <p>In this section, we will inspect, clean and prepare the data for further processing.</p>
 
-<ol>
-<li>reformat all measurement columns into numerics</li>
-</ol>
+<p>1) reformat all measurement columns into numerics</p>
 
 <div class="highlight highlight-source-r"><pre><span class="pl-k">for</span> (<span class="pl-smi">i</span> <span class="pl-k">in</span> <span class="pl-c1">8</span><span class="pl-k">:</span><span class="pl-c1">159</span>) {
         <span class="pl-smi">data</span>[,<span class="pl-smi">i</span>] <span class="pl-k">&lt;-</span> as.numeric(<span class="pl-smi">data</span>[,<span class="pl-smi">i</span>])
         <span class="pl-smi">test</span>[,<span class="pl-smi">i</span>] <span class="pl-k">&lt;-</span> as.numeric(<span class="pl-smi">test</span>[,<span class="pl-smi">i</span>])
 }</pre></div>
 
-<ol>
-<li>remove unnecessary columns</li>
-</ol>
+<p>2) remove unnecessary columns</p>
 
 <p>The first seven columns of the training dataset (X, user_name, raw_timestamp_part_1, raw_timestamp_part_2, cvtd_timestamp, new_window, num_window) are not related to the sensor measurements, but rather to the identity of the person, and the time stamps and capture windows for the sensor data.  According to the description of weight-lifting exercise experiment, participants were supervised by an experienced wieght lifter to make sure the execution complied to the manner that they are supposed to simulate, so those seven columns are not determining features to the predictive model and can be removed.</p>
 
 <div class="highlight highlight-source-r"><pre><span class="pl-smi">data</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">data</span>[,<span class="pl-k">-</span>(<span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-c1">7</span>)]</pre></div>
 
-<ol>
-<li>identify variables that are overwhelmingly missing values (NA) and these too are to be removed</li>
-</ol>
+<p>3) identify variables that are overwhelmingly missing values (NA) and these too are to be removed</p>
 
 <div class="highlight highlight-source-r"><pre><span class="pl-c"># select columns that don't have NAs</span>
 <span class="pl-smi">indexNA</span> <span class="pl-k">&lt;-</span> as.vector( sapply(<span class="pl-smi">data</span>, <span class="pl-k">function</span>(<span class="pl-smi">x</span>) {length(which(is.na(<span class="pl-smi">x</span>)))<span class="pl-k">!=</span><span class="pl-c1">0</span>}))
