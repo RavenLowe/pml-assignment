@@ -22,6 +22,9 @@
       <h1>
 <a id="predictive-modeling-on-human-activity-recognition-of-weight-lifting-exercise" class="anchor" href="#predictive-modeling-on-human-activity-recognition-of-weight-lifting-exercise" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predictive Modeling on Human Activity Recognition of Weight Lifting Exercise</h1>
 
+<p><img src="http://github.com/RavenLowe/pml-assignment/tree/master/figure/unnamed-chunk-8-1.png" alt="plot">
+<img src="http://github.com/RavenLowe/pml-assignment/tree/master/figure/unnamed-chunk-8-1.png" alt="plot"></p>
+
 <h3>
 <a id="executive-summary" class="anchor" href="#executive-summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Executive summary</h3>
 
@@ -162,7 +165,8 @@ print(<span class="pl-smi">modFit_rf</span>)</pre></div>
 <span class="pl-c"># plot the accuracy and Gini</span>
 varImpPlot(<span class="pl-smi">modFit_rf</span>, <span class="pl-v">main</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>Mean Decrease of Accuracy and Gini per variable<span class="pl-pds">"</span></span>)</pre></div>
 
-<p><img src="http://github.com/RavenLowe/pml-assignment/tree/master/figure/unnamed-chunk-8-1.png" alt="plot"></p>
+<p><img src="http://github.com/RavenLowe/pml-assignment/tree/master/figure/unnamed-chunk-8-1.png" alt="plot">
+<img src="http://github.com/RavenLowe/pml-assignment/tree/master/figure/unnamed-chunk-8-1.png" alt="plot"></p>
 
 <p>This plot indicates that the measurements of the belt sensor (roll, yaw, and pitch), the forearm (pitch) and the dumbbell (magnetic component), are the most important for distinguishing whether this particular exercise is being done correctly or not. This makes sense as the way the core body moves and the rotation of the forearm, are closely related to a correct execution of the biceps curl, and in the case of the metallic dumbbell the position changes are readily detected by the magnetometer.</p>
 
