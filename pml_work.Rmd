@@ -166,7 +166,7 @@ cm_rf_probe$table
 cm_rf_probe$overall
 ```
 
-Cross-validating the model results in an estimated error of `r paste(round(100 - cm_rf_probe$overall["Accuracy"]*100, 2), "%")`.  As for the 95% confidence interval: [`r round(cm_rf_probe$overall["AccuracyLower"], 4)`, `r round(cm_rf_probe$overall["AccuracyUpper"], 4)`]. The estimated accuracy is well above the "no information rate" statistic of `r round(cm_rf_probe$overall["AccuracyNull"], 4)`. The validation results also in a high kappa statistic of `r round(cm_rf_probe$overall["Kappa"], 4)`, which suggest a very good classifier.
+Cross-validating the model results in an estimated error of `r paste(round(100 - cm_rf_probe$overall["Accuracy"]*100, 2), "%")` and the 95% confidence interval: [`r round(cm_rf_probe$overall["AccuracyLower"], 4)`, `r round(cm_rf_probe$overall["AccuracyUpper"], 4)`]. The validation results also in a high kappa statistic of `r round(cm_rf_probe$overall["Kappa"], 4)`, which suggest a very good classifier.
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
 cm_rf_probe$byClass

@@ -205,7 +205,7 @@ cm_rf_probe$overall
 ##      0.0000000            NaN
 ```
 
-Cross-validating the model results in an estimated error of 0.42 %.  As for the 95% confidence interval: [0.9937, 0.9972]. The estimated accuracy is well above the "no information rate" statistic of 0.2858. The validation results also in a high kappa statistic of 0.9946, which suggest a very good classifier.
+Cross-validating the model results in an estimated error of 0.42 % and the 95% confidence interval: [0.9937, 0.9972]. The validation results also in a high kappa statistic of 0.9946, which suggest a very good classifier.
 
 
 ```r
